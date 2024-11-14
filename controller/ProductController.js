@@ -1,14 +1,23 @@
 import Product from "../models/ProductModel.js";
+import Categories from "../models/CategoryModel.js";
 import path from "path";
 import fs from "fs";
 
 // get all products from the database
 export const getProducts = async (req, res) => {
   try {
-    const response = await Product.findAll();
+    const response = await Product.findAll({
+      include: [
+        {
+          model: Categories,
+          attributes: ["name"], // hanya ambil field 'name' dari tabel kategori
+        },
+      ],
+    });
     res.json(response);
   } catch (error) {
     console.log(error.message);
+    res.status(500).json({ msg: "Failed to fetch products" });
   }
 };
 
